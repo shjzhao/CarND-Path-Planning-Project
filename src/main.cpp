@@ -252,17 +252,6 @@ int main() {
           	vector<double> next_y_vals;
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
-//			double dist_inc = 0.5;
-//			for(int i = 0; i < 50; i++)
-//			{
-//				double next_s = car_s+(i+1)*dist_inc;
-//                double next_d = 6;
-//                vector<double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-//
-//			    next_x_vals.push_back(xy[0]);
-//				next_y_vals.push_back(xy[1]);
-//			}
-
 						vector<double> ptsx;
 						vector<double> ptsy;
 
@@ -320,6 +309,21 @@ int main() {
 
 						// create a spline
 						tk::spline s;
+
+						// set (x, y) points to the spline
+            s.set_points(ptsx, ptsy);
+
+            // start with all of the previous path points from last time
+            for(int i = 0; i < previous_path_x.size(); i++)
+            {
+              next_x_vals.push_back(previous_path_x[i]);
+              next_y_vals.push_back(previous_path_y[i]);
+            }
+
+            // calculate how to break up spline points so that we travel at our desired reference velocity
+            double target_x = 30.0;
+            double target_y = s(target_x);
+            double target_dist = sqrt((target_x)*(target_x)+(target_y)*(target_y));
 
 
           	msgJson["next_x"] = next_x_vals;
