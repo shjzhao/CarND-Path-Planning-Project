@@ -253,37 +253,71 @@ int main() {
             }
 
             bool too_close = false;
+						bool too_close_l = false;
+						bool too_close_r = false;
 
           	//find ref_v to use
             for(int i = 0; i < sensor_fusion.size(); i++)
             {
-              //car is in my lane
+              //check car is in my lane
               float d = sensor_fusion[i][6];
-              if(d < (2+4*lane+2) && d > (2+4*lane-2))
-              {
-                double vx = sensor_fusion[i][3];
-                double vy = sensor_fusion[i][4];
-                double check_speed = sqrt(vx*vx+vy*vy);
-                double check_car_s = sensor_fusion[i][5];
+							int car_lane = -1;
+							// is it on the same lane we are
+							if ( d > 0 && d < 4 ) {
+								car_lane = 0;
+							} else if ( d > 4 && d < 8 ) {
+								car_lane = 1;
+							} else if ( d > 8 && d < 12 ) {
+								car_lane = 2;
+							}
+							if (car_lane < 0) {
+								continue;
+							}
 
-                check_car_s += ((double)prev_size*0.02*check_speed); // if using previous points, we can project s value outwards in time
-                // check s values treater than
-                if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
-                {
-                  too_close = true;
-                  if(lane > 0)
-                  {
-                    lane = 0;
-                  }
-                }
-              }
+							double vx = sensor_fusion[i][3];
+							double vy = sensor_fusion[i][4];
+							double check_speed = sqrt(vx*vx+vy*vy);
+							double check_car_s = sensor_fusion[i][5];
 
+							check_car_s += ((double)prev_size*0.02*check_speed); // if using previous points, we can project s value outwards in time
+							// check s values greater than
+
+							if((check_car_s > car_s) && ((check_car_s-car_s) < 30)) // no cars in front
+							{
+								if (car_lane == lane) {
+									too_close = true;
+								}
+								else if (car_lane < lane) {
+									too_close_l = true;
+								}
+								else if (car_lane > lane) {
+									too_close_r = true;
+								}
+							}
+
+							if((car_lane != lane) &&(check_car_s < car_s) && ((check_car_s-car_s) > -30)) // no cars behind
+							{
+								if (car_lane < lane) {
+									too_close_l = true;
+								}
+								else if (car_lane > lane) {
+									too_close_r = true;
+								}
+							}
             }
 
             if(too_close)
             {
               ref_vel -= 0.224; // 5m/s^2
-            }
+							if ( !too_close_l && lane > 0 )// no cars left and not left lane
+							{
+								lane--; // Change left.
+							}
+							else if ( !too_close_r && lane != 2 )// no cars right and not right lane
+							{
+								lane++; // Change right.
+							}
+						}
             else if(ref_vel < 49.5)
             {
               ref_vel += 0.224; // 5m/s^2
