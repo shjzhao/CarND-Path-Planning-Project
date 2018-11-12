@@ -256,13 +256,11 @@ int main() {
 						bool too_close_l = false;
 						bool too_close_r = false;
 
-          	//find ref_v to use
             for(int i = 0; i < sensor_fusion.size(); i++)
             {
-              //check car is in my lane
               float d = sensor_fusion[i][6];
 							int car_lane = -1;
-							// is it on the same lane we are
+							// car in which lane
 							if ( d > 0 && d < 4 ) {
 								car_lane = 0;
 							} else if ( d > 4 && d < 8 ) {
