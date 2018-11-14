@@ -1,6 +1,40 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
-   
+
+## Reflection
+
+### Start
+Line 204-288: The car starts to drive in the middle lane, the initial velocity is 0.0 mph.
+
+### Lane-change strategy
+Line 248-322.
+
+Line 262-272: find which lane the car is in.
+Line 283-302: if there is a car in front of our car or behind our car in 30m in s value in 3 lanes
+
+The lane-change strategy shows in the picture below.
+
+![Lane-change strategy](pics/Lane-change_strategy.png)
+
+### Velocity control
+Line 307-309: If there is a car too close in front of us(<30m), our car will slow down by 5m/s.
+Line 319-322: If there is no cars in front of us and <30m, and our velocity < 49.5, our car will accelerate by 5m/s.
+
+### Generate a path
+Line 330-434
+
+The trajectory  is generated based on the velocity, which lane the car is about to change, car coordinates and past path.
+
+Line 339-350: If there is less than two points in the previous trajectory, make the path tangent to the car.
+
+Line
+ (or the car position if there are no previous trajectory, lines 321 to 345) are used in conjunction three points at a far distance (lines 348 to 350) to initialize the spline calculation (line 370 and 371). To make the work less complicated to the spline calculation based on those points, the coordinates are transformed (shift and rotation) to local car coordinates (lines 361 to 367).
+
+In order to ensure more continuity on the trajectory (in addition to adding the last two point of the pass trajectory to the spline adjustment), the pass trajectory points are copied to the new trajectory (lines 374 to 379). The rest of the points are calculated by evaluating the spline and transforming the output coordinates to not local coordinates (lines 388 to 407). Worth noticing the change in the velocity of the car from line 393 to 398. The speed change is decided on the behavior part of the code, but it is used in that part to increase/decrease speed on every trajectory points instead of doing it for the complete trajectory.
+
+
+
+
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
 
