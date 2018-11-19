@@ -25,10 +25,21 @@ Line 330-434
 
 The trajectory  is generated based on the velocity, which lane the car is about to change, car coordinates and past path.
 
-Line 339-350: If there is less than two points in the previous trajectory, make the path tangent to the car.
+Line 339-350: If there are less than two points in the previous trajectory, make the path tangent to the car.
 
+Line 352-368: If there are more than two points in the previous trajectory, use the previous path end points as starting reference.
 
+Line 370-381: Add 3 evenly 30m spaced points in Frenet to the reference points.
 
+Line 382-391: Shift to car local coordinates.
+
+Line 393-397: Using reference points to generate the spline.
+
+Line 399-404: Add previous path points to the next path for continuity.
+
+Line 406-410: calculate to break up the spline points within 30m in x-direction.
+
+Line 413-434: always output 50 points to the path. calculate every point coordinates and shift to normal.
 
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
